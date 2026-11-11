@@ -1,0 +1,539 @@
+<title>Habit Pal Презентация</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+/* Layout: full-viewport slides, two columns (words | live phone) on desktop, stacked on phones.
+   Look: one warm dark world taken from the flame logo. Boldness lives in the live phones and the logo pop. */
+:root{
+  --bg:#1B130E;          /* deep roast */
+  --surface:#2B1E17;     /* logo ground */
+  --surface2:#3A2A20;
+  --line:rgba(255,232,205,.13);
+  --fg:#FFF3E4;
+  --mut:#C9B5A1;
+  --amber:#FF9F2E;
+  --gold:#FFD24A;
+  --on:#2B1E17;
+  --ok:#7DE3A6;
+  --font:'Nunito',ui-rounded,'SF Pro Rounded',system-ui,-apple-system,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --ph:min(70vh,640px);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--font);font-size:17px;line-height:1.5;overflow:hidden;
+  padding-left:max(0px,env(safe-area-inset-left,0px));padding-right:max(0px,env(safe-area-inset-right,0px))}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:10px}
+svg.i{width:1.25em;height:1.25em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+h1,h2,h3,p{margin:0}
+h1,h2{font-weight:900;letter-spacing:-.02em;line-height:1.04;text-wrap:balance}
+h1{font-size:clamp(2.5rem,6vw,5rem)}
+h2{font-size:clamp(2rem,4.4vw,3.6rem)}
+h3{font-size:1.15rem;font-weight:800;line-height:1.25}
+.lead{font-size:clamp(1.05rem,1.7vw,1.3rem);color:var(--mut);max-width:34ch;text-wrap:pretty}
+.eyebrow{font-weight:800;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--amber)}
+.grad{background:linear-gradient(135deg,var(--gold),var(--amber));-webkit-background-clip:text;background-clip:text;color:transparent}
+.mono{font-family:var(--mono);font-weight:700}
+
+/* progress + deck */
+.progress{position:fixed;top:env(safe-area-inset-top,0px);left:0;right:0;height:4px;background:rgba(255,232,205,.08);z-index:20}
+.progress i{display:block;height:100%;width:10%;background:linear-gradient(90deg,var(--gold),var(--amber));transition:width .5s cubic-bezier(.2,.7,.2,1);border-radius:0 4px 4px 0}
+.deck{position:fixed;inset:0}
+.slide{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;display:flex;
+  padding:clamp(28px,5vh,56px) max(20px,env(safe-area-inset-left,0px)) calc(92px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-right,0px));
+  opacity:0;visibility:hidden;transition:opacity .5s ease,transform .55s cubic-bezier(.2,.7,.2,1),visibility 0s .55s}
+.slide[data-pos=prev]{transform:translateX(-5%)}
+.slide[data-pos=next]{transform:translateX(5%)}
+.slide.active{opacity:1;visibility:visible;transform:none;transition:opacity .5s ease,transform .55s cubic-bezier(.2,.7,.2,1),visibility 0s}
+.slide::before{content:"";position:absolute;inset:0;pointer-events:none;z-index:-1;
+  background:radial-gradient(60% 55% at 85% 15%,rgba(255,159,46,.16),transparent 70%),radial-gradient(45% 45% at 5% 95%,rgba(255,210,74,.08),transparent 70%)}
+.wrap{margin:auto;width:100%;max-width:1180px;display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,5vw,72px);align-items:center}
+.wrap.solo{grid-template-columns:minmax(0,1fr)}
+.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+.slide.active [data-r]{animation:rise .7s cubic-bezier(.2,.7,.2,1) both;animation-delay:calc(var(--i,0)*90ms + 120ms)}
+@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+
+/* phone */
+.phone-col{display:flex;flex-direction:column;align-items:center;gap:14px;min-width:0}
+.phone{padding:9px;border-radius:46px;background:linear-gradient(160deg,#4a372b,#241912);border:1px solid var(--line);box-shadow:0 30px 70px rgba(0,0,0,.55),0 0 0 1px rgba(0,0,0,.4),0 0 90px rgba(255,159,46,.14)}
+.screen{position:relative;height:var(--ph);aspect-ratio:390/800;border-radius:37px;overflow:hidden;background:#0E0D11}
+.screen iframe{position:absolute;left:0;top:0;width:390px;height:800px;border:0;transform-origin:0 0;background:#0E0D11}
+.screen.vid{aspect-ratio:9/16;border-radius:30px}
+.screen video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+.ring{position:absolute;z-index:3;pointer-events:none;width:17%;aspect-ratio:1;top:94.4%;left:0;transform:translate(-50%,-50%);border-radius:50%;
+  border:3px solid var(--gold);box-shadow:0 0 0 0 rgba(255,210,74,.6);animation:ping 1.6s ease-out infinite;transition:left .4s cubic-bezier(.2,.7,.2,1),opacity .3s}
+.ring[hidden]{display:none}
+.ring b{position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);white-space:nowrap;background:var(--gold);color:var(--on);font-size:.82rem;font-weight:900;padding:5px 11px;border-radius:99px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.ring[data-i="4"] b{transform:translateX(-80%)}
+.ring[data-i="0"] b{transform:translateX(-20%)}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,210,74,.65)}80%,100%{box-shadow:0 0 0 18px rgba(255,210,74,0)}}
+.cap{min-height:3.2em;max-width:300px;text-align:center;color:var(--mut);font-size:.95rem;font-weight:700}
+.cap b{color:var(--fg)}
+
+/* chips + steps */
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:8px 16px;border-radius:99px;background:var(--surface);border:1px solid var(--line);font-weight:800;font-size:.95rem;display:inline-flex;align-items:center;gap:8px;transition:background .2s,border-color .2s,transform .15s}
+.chip:hover{border-color:rgba(255,159,46,.6)}
+.chip:active{transform:scale(.96)}
+.chip[aria-pressed=true],.chip.on{background:linear-gradient(135deg,var(--gold),var(--amber));color:var(--on);border-color:transparent}
+.chip.lock{opacity:.45}
+.chip small{font-weight:700;opacity:.75}
+.steps{display:flex;flex-direction:column;gap:10px}
+.step{display:flex;gap:14px;align-items:center;text-align:left;padding:12px 14px;border-radius:18px;background:var(--surface);border:1px solid var(--line);min-height:56px;transition:border-color .2s,background .2s}
+.step .n{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;background:var(--surface2);font-weight:900;flex:none}
+.step.on{border-color:var(--amber);background:var(--surface2)}
+.step.on .n{background:var(--amber);color:var(--on)}
+.step span{font-weight:800}
+.step em{display:block;font-style:normal;color:var(--mut);font-weight:600;font-size:.92rem}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:20px;display:flex;flex-direction:column;gap:8px}
+.card p{color:var(--mut);font-size:.98rem}
+.card .ic{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:linear-gradient(135deg,var(--gold),var(--amber));color:var(--on);margin-bottom:6px}
+.card .ic svg{width:24px;height:24px}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.btn{min-height:48px;padding:10px 22px;border-radius:99px;font-weight:900;display:inline-flex;align-items:center;justify-content:center;gap:10px;background:linear-gradient(135deg,var(--gold),var(--amber));color:var(--on);box-shadow:0 10px 26px rgba(255,159,46,.28);transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--surface);color:var(--fg);box-shadow:none;border:1px solid var(--line)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.statement{padding:18px 22px;border-radius:22px;border:1px solid rgba(255,159,46,.45);background:rgba(255,159,46,.09);font-weight:800;font-size:1.1rem}
+
+/* logo */
+.logo{width:clamp(84px,12vw,128px);aspect-ratio:1;border-radius:28%;display:block;box-shadow:0 16px 40px rgba(0,0,0,.5)}
+.logo-row{display:flex;align-items:center;gap:18px}
+.wordmark{font-weight:900;font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-.01em}
+
+/* chat */
+.chat{width:min(100%,380px);border-radius:28px;background:#14100d;border:1px solid var(--line);overflow:hidden;box-shadow:0 30px 70px rgba(0,0,0,.5)}
+.chat-h{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+.chat-h img,.chat-h svg{width:38px;height:38px;border-radius:50%}
+.chat-h b{display:block;font-weight:900;line-height:1.1}
+.chat-h span{font-size:.78rem;color:var(--mut);font-weight:700}
+.chat-b{padding:16px;display:flex;flex-direction:column;gap:14px;min-height:400px}
+.msg .tag{font-size:.72rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--amber);margin:0 0 5px 6px}
+.bub{background:var(--surface2);border-radius:6px 20px 20px 20px;padding:11px 14px;font-size:.97rem;max-width:92%;position:relative}
+.bub .tm{display:block;text-align:right;font-size:.72rem;color:var(--mut);font-weight:700;margin-top:3px}
+.bub .who{font-weight:900;color:var(--gold);font-size:.82rem;display:block}
+.bub button{margin-top:8px;width:100%;min-height:44px;border-radius:12px;background:rgba(255,159,46,.18);color:var(--gold);font-weight:900;border:1px solid rgba(255,159,46,.4)}
+.slide.active .msg{animation:pop .6s cubic-bezier(.3,1.5,.5,1) both;animation-delay:calc(var(--d)*1s + .3s)}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.92)}to{opacity:1;transform:none}}
+.facts{display:flex;flex-direction:column;gap:12px;padding:0;margin:0;list-style:none}
+.facts li{display:flex;gap:12px;align-items:flex-start;color:var(--mut)}
+.facts li svg{color:var(--amber);margin-top:3px}
+.facts li b{color:var(--fg)}
+
+/* roadmap */
+.road{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.road .card h3{display:flex;align-items:center;gap:8px}
+.road ul{margin:0;padding-left:1.1em;color:var(--mut);font-size:.95rem;display:flex;flex-direction:column;gap:4px}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--ok)}
+.dot.n{background:var(--gold)}.dot.l{background:var(--mut)}
+.stack{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.stack .card{padding:16px}
+.stack .card span{font-size:.74rem;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:var(--amber)}
+
+/* CTA */
+.cta{display:flex;flex-direction:column;align-items:center;text-align:center;gap:22px;margin:auto}
+.pop-wrap{position:relative;display:grid;place-items:center;width:200px;height:200px}
+.pop-wrap::before,.pop-wrap::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--amber);opacity:0}
+.slide.active .pop-wrap::before{animation:wave 2.4s ease-out .5s infinite}
+.slide.active .pop-wrap::after{animation:wave 2.4s ease-out 1.5s infinite}
+@keyframes wave{0%{transform:scale(.55);opacity:.7}100%{transform:scale(1.4);opacity:0}}
+.pop-wrap .logo{width:150px;box-shadow:0 20px 60px rgba(255,159,46,.35)}
+.slide.active .pop-wrap .logo{animation:logopop 1s cubic-bezier(.2,.9,.3,1.4) .15s both}
+@keyframes logopop{0%{transform:scale(0) rotate(-14deg)}55%{transform:scale(1.22) rotate(5deg)}75%{transform:scale(.94) rotate(-2deg)}100%{transform:scale(1) rotate(0)}}
+.link{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center}
+.link code{font-family:var(--mono);font-weight:700;font-size:1.15rem;padding:12px 18px;border-radius:16px;background:var(--surface);border:1px dashed rgba(255,159,46,.6);color:var(--gold)}
+
+/* range */
+.lvl{display:flex;align-items:center;gap:14px;font-weight:800}
+.lvl input{flex:1;min-height:44px;accent-color:var(--amber)}
+.lbl{font-size:.78rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
+.vbtn{display:inline-flex;align-items:center;gap:8px}
+
+/* bottom bar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px max(16px,env(safe-area-inset-right,0px)) calc(10px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:linear-gradient(to top,var(--bg) 60%,transparent)}
+.nav{width:48px;height:48px;border-radius:50%;background:var(--surface);border:1px solid var(--line);display:grid;place-items:center;transition:background .2s,transform .15s}
+.nav:hover{background:var(--surface2)}.nav:active{transform:scale(.94)}
+.nav[disabled]{opacity:.35;cursor:default}
+.dots{display:flex;gap:2px;align-items:center;flex-wrap:wrap;justify-content:center}
+.dots button{width:24px;height:44px;display:grid;place-items:center}
+.dots button i{display:block;width:8px;height:8px;border-radius:50%;background:rgba(255,232,205,.28);transition:all .3s}
+.dots button[aria-current=true] i{width:24px;border-radius:99px;background:var(--amber)}
+.count{font-weight:800;color:var(--mut);font-variant-numeric:tabular-nums;min-width:3.4em;text-align:center}
+.hint{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:25;background:var(--gold);color:var(--on);font-weight:900;font-size:.9rem;padding:8px 16px;border-radius:99px;transition:opacity .5s;pointer-events:none;white-space:nowrap}
+.hint.off{opacity:0}
+
+@media(max-width:860px){
+  :root{--ph:min(60vh,540px)}
+  .wrap{grid-template-columns:minmax(0,1fr);gap:24px}
+  .grid3,.road{grid-template-columns:minmax(0,1fr)}
+  .count{display:none}
+  .dots button{width:16px}
+  .dots button[aria-current=true] i{width:16px}
+  .lead{max-width:none}
+}
+@media(max-width:480px){.stack{grid-template-columns:minmax(0,1fr)}.grid2{grid-template-columns:minmax(0,1fr)}.dots{display:none}.bar{justify-content:space-between}}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition-duration:.01ms!important;transition-delay:0s!important;scroll-behavior:auto!important}
+  .ring{box-shadow:0 0 0 6px rgba(255,210,74,.35)}
+}
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="logo" viewBox="0 0 256 256"><rect width="256" height="256" fill="#2B1E17"/><g transform="translate(46.1 50.1) scale(0.64)"><path d="M128 14 C150 66 206 98 206 162 C206 212 172 242 128 242 C84 242 50 212 50 162 C50 122 80 102 92 70 C106 88 112 102 112 102 C122 72 122 46 128 14Z" fill="#FF9F2E"/><path d="M128 130 C142 160 170 172 170 200 C170 222 152 234 128 234 C104 234 86 222 86 200 C86 172 116 160 128 130Z" fill="#FFD24A"/><circle cx="108" cy="196" r="9" fill="#2B1E17"/><circle cx="148" cy="196" r="9" fill="#2B1E17"/></g></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.85"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"/></symbol>
+  <symbol id="i-sound" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 5.5a9 9 0 0 1 0 13"/></symbol>
+  <symbol id="i-mute" viewBox="0 0 24 24"><path d="M11 5L6 9H2v6h4l5 4z"/><path d="M22 9l-6 6"/><path d="M16 9l6 6"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/></symbol>
+  <symbol id="i-replay" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+</svg>
+
+<div class="progress" aria-hidden="true"><i id="prog"></i></div>
+
+<main class="deck" id="deck" aria-live="polite">
+
+<!-- 1 HOOK -->
+<section class="slide" aria-label="Habit Pal">
+  <div class="wrap">
+    <div class="col">
+      <div class="logo-row" data-r style="--i:0"><svg class="logo" viewBox="0 0 256 256" role="img" aria-label="Habit Pal logo"><use href="#logo"/></svg><span class="wordmark">Habit Pal</span></div>
+      <h1 data-r style="--i:1">Привычки, которые <span class="grad">хочется</span> отмечать.</h1>
+      <p class="lead" data-r style="--i:2">Мини-приложение в Telegram с питомцем, который растёт каждый раз, когда вы занимаетесь. Без установки, без аккаунта, без платной подписки.</p>
+      <div class="chips" data-r style="--i:3"><span class="chip on">Без лимита привычек</span><span class="chip">Группы друзей</span><span class="chip">Бесплатно</span></div>
+      <p style="color:var(--mut);font-weight:700;--i:4" data-r>Телефон настоящий. Понажимайте, потом нажмите стрелку вправо.</p>
+    </div>
+    <div class="phone-col" data-r style="--i:2">
+      <div class="phone"><div class="screen" data-phone data-tab="today" id="p1"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 2 PROBLEM -->
+<section class="slide" aria-label="Проблема">
+  <div class="wrap solo">
+    <div class="col" style="gap:28px">
+      <span class="eyebrow" data-r style="--i:0">Проблема</span>
+      <h2 data-r style="--i:1">Трекеры привычек похожи на <span class="grad">повинность</span>.</h2>
+      <div class="grid3">
+        <div class="card" data-r style="--i:2"><h3>Серии, которые наказывают</h3><p>Пропустил день, и большое число обнуляется. Люди бросают вместо того, чтобы начать заново.</p></div>
+        <div class="card" data-r style="--i:3"><h3>Бесплатно только 3–5 привычек</h3><p>Большинство трекеров ограничивают бесплатные привычки и просят подписку, чтобы добавить ещё одну.</p></div>
+        <div class="card" data-r style="--i:4"><h3>Ещё одно приложение</h3><p>Ещё одна иконка, ещё один аккаунт, ещё одни уведомления, которые вы в итоге отключите.</p></div>
+      </div>
+      <p class="statement" data-r style="--i:5">Habit Pal работает внутри Telegram, не ограничивает число привычек и не наказывает за пропуск.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 3 HOW IT WORKS + VIDEO -->
+<section class="slide" aria-label="Как это работает">
+  <div class="wrap">
+    <div class="col">
+      <span class="eyebrow" data-r style="--i:0">Как это работает</span>
+      <h2 data-r style="--i:1">От <span class="mono grad" style="font-size:.82em">/start</span> до первой отметки за минуту.</h2>
+      <div class="steps">
+        <div class="step" data-r style="--i:2"><span class="n">1</span><div><span>Откройте бота, отправьте <span class="mono">/start</span></span><em>Бот поздоровается и покажет одну кнопку.</em></div></div>
+        <div class="step" data-r style="--i:3"><span class="n">2</span><div><span>Нажмите «Open»</span><em>Мини-приложение работает прямо в Telegram. Ничего устанавливать не нужно.</em></div></div>
+        <div class="step" data-r style="--i:4"><span class="n">3</span><div><span>Выберите питомца, добавьте привычки</span><em>Напоминания приходят в тот же чат.</em></div></div>
+      </div>
+    </div>
+    <div class="phone-col" data-r style="--i:2">
+      <div class="phone"><div class="screen vid"><video id="vid" muted loop playsinline preload="metadata" src="media/tutorial.mp4" aria-label="Видеоурок Habit Pal"></video></div></div>
+      <button class="chip" id="snd" aria-pressed="false"><svg class="i"><use href="#i-mute"/></svg><span>Звук выключен</span></button>
+    </div>
+  </div>
+</section>
+
+<!-- 4 ADD + CHECK OFF -->
+<section class="slide" aria-label="Привычки и отметки">
+  <div class="wrap">
+    <div class="col">
+      <span class="eyebrow" data-r style="--i:0">Приложение</span>
+      <h2 data-r style="--i:1">Добавьте привычку. Нажмите на кружок. <span class="grad">Готово.</span></h2>
+      <p class="lead" data-r style="--i:2">Следуйте жёлтой подсказке на телефоне или выберите шаг.</p>
+      <div class="steps" data-tour="p4" data-r style="--i:3">
+        <button class="step" data-tab="today" data-en="Today"><span class="n">1</span><div><span>Сегодня</span><em>Нажмите на кружок, чтобы отметить привычку.</em></div></button>
+        <button class="step" data-tab="create" data-en="Create"><span class="n">2</span><div><span>Создать</span><em>Выберите шаблон или придумайте своё название. Укажите дни и напоминание.</em></div></button>
+        <button class="step" data-tab="review" data-en="Review"><span class="n">3</span><div><span>Итоги дня</span><em>Одна строка о вашем дне, когда вам удобно.</em></div></button>
+        <button class="step" data-tab="profile" data-en="Profile"><span class="n">4</span><div><span>Профиль</span><em>Ваш питомец и сетка всех дней, когда вы занимались.</em></div></button>
+      </div>
+    </div>
+    <div class="phone-col" data-r style="--i:2">
+      <div class="phone"><div class="screen" data-phone data-tab="today" id="p4"><div class="ring" data-i="2"><b>Нажмите «Create»</b></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 BOT REMINDERS -->
+<section class="slide" aria-label="Напоминания бота">
+  <div class="wrap">
+    <div class="col">
+      <span class="eyebrow" data-r style="--i:0">Напоминания бота</span>
+      <h2 data-r style="--i:1">Бот, который подсказывает, а <span class="grad">не донимает</span>.</h2>
+      <ul class="facts" data-r style="--i:2">
+        <li><svg class="i"><use href="#i-check"/></svg><span><b>Напоминание о привычке</b> в заданное время, только если она ещё не выполнена.</span></li>
+        <li><svg class="i"><use href="#i-check"/></svg><span><b>Дневное напоминание</b>, по желанию, приходит только если что-то осталось.</span></li>
+        <li><svg class="i"><use href="#i-check"/></svg><span><b>Вечерний итог</b>, одно сообщение в день с добрым завершением.</span></li>
+      </ul>
+      <div data-r style="--i:3"><button class="btn ghost" id="replay"><svg class="i"><use href="#i-replay"/></svg>Повторить</button></div>
+    </div>
+    <div class="phone-col" data-r style="--i:2">
+      <div class="chat" id="chat">
+        <div class="chat-h"><svg viewBox="0 0 256 256" aria-hidden="true"><use href="#logo"/></svg><div><b>Habit Pal</b><span>bot</span></div></div>
+        <div class="chat-b">
+          <div class="msg" style="--d:0"><p class="tag">Дневное напоминание · по желанию</p><div class="bub">Do not forget your habits today, 3 still open. Have a good day.<span class="tm">14:00</span></div></div>
+          <div class="msg" style="--d:1.1"><p class="tag">Напоминание о привычке · для каждой</p><div class="bub">Time for Gym session. You've got this.<span class="tm">18:30</span></div></div>
+          <div class="msg" style="--d:2.2"><p class="tag">Вечерний итог · раз в день</p><div class="bub"><span class="who">Habit Pal bot</span>Done: Read 20 min, Drink water, Meditate, Journal.<br>Skipped: Gym session, Stretch.<br>You did great.<button id="openrev">Open review</button><span class="tm">21:00</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 6 BUDDY -->
+<section class="slide" aria-label="Питомцы">
+  <div class="wrap">
+    <div class="col">
+      <span class="eyebrow" data-r style="--i:0">Питомцы</span>
+      <h2 data-r style="--i:1">10 питомцев. 12 нарядов. Их <span class="grad">зарабатывают</span> регулярностью.</h2>
+      <div data-r style="--i:2"><div class="lbl" style="margin-bottom:8px">Выберите питомца</div><div class="chips" id="pets"></div></div>
+      <div data-r style="--i:3"><div class="lvl"><label for="lv" class="lbl" style="white-space:nowrap">Уровень <span id="lvn">4</span></label><input id="lv" type="range" min="1" max="8" value="4"></div></div>
+      <div data-r style="--i:4"><div class="lbl" style="margin-bottom:8px">Наряды (закрытые открываются с уровнем)</div><div class="chips" id="outfits"></div></div>
+    </div>
+    <div class="phone-col" data-r style="--i:2">
+      <div class="phone"><div class="screen" data-phone data-tab="today" data-manual id="p6"></div></div>
+      <p class="cap">Пропуски не вредят питомцу. Уровень только растёт.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 7 GROUPS -->
+<section class="slide" aria-label="Группы друзей">
+  <div class="wrap">
+    <div class="col">
+      <span class="eyebrow" data-r style="--i:0">Группы друзей</span>
+      <h2 data-r style="--i:1">Поддерживайте друг друга. <span class="grad">Без рейтингов.</span></h2>
+      <div class="grid2">
+        <div class="card" data-r style="--i:2"><div class="ic"><svg class="i"><use href="#i-users"/></svg></div><h3>До 7 человек</h3><p>Группа маленькая специально. Вы знаете всех в ней.</p></div>
+        <div class="card" data-r style="--i:3"><div class="ic"><svg class="i"><use href="#i-lock"/></svg></div><h3>Только общие привычки</h3><p>Друзья видят только то, чем вы решили поделиться. Остальное остаётся личным.</p></div>
+        <div class="card" data-r style="--i:4;grid-column:1/-1"><div class="ic"><svg class="i"><use href="#i-heart"/></svg></div><h3>Поддержка, а не баллы</h3><p>Одно касание отправляет тёплую реакцию. Нет таблицы лидеров, в которой можно проиграть.</p></div>
+      </div>
+    </div>
+    <div class="phone-col" data-r style="--i:2">
+      <div class="phone"><div class="screen" data-phone data-tab="group" id="p7"></div></div>
+      <p class="cap">Попробуйте отправить реакцию.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 8 PRIVACY -->
+<section class="slide" aria-label="Приватность и никакого спама">
+  <div class="wrap solo">
+    <div class="col" style="gap:28px">
+      <span class="eyebrow" data-r style="--i:0">Доверие</span>
+      <h2 data-r style="--i:1">Личное по умолчанию. <span class="grad">Тихое</span> по замыслу.</h2>
+      <div class="grid2">
+        <div class="card" data-r style="--i:2"><div class="ic"><svg class="i"><use href="#i-lock"/></svg></div><h3>Привычки личные</h3><p>Никто ничего не видит, пока вы сами не поделитесь привычкой с группой.</p></div>
+        <div class="card" data-r style="--i:3"><div class="ic"><svg class="i"><use href="#i-bell"/></svg></div><h3>Строгий лимит сообщений</h3><p>Один вечерний итог, одно необязательное напоминание и напоминания только по привычкам, которые вы включили.</p></div>
+        <div class="card" data-r style="--i:4"><div class="ic"><svg class="i"><use href="#i-check"/></svg></div><h3>Никаких повторов</h3><p>Каждое сообщение записывается по дням, поэтому перезапуск не отправит его снова.</p></div>
+        <div class="card" data-r style="--i:5"><div class="ic"><svg class="i"><use href="#i-trash"/></svg></div><h3>Удалить мои данные</h3><p>Одна команда полностью удаляет ваш аккаунт.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 STACK + ROADMAP -->
+<section class="slide" aria-label="Стек и планы">
+  <div class="wrap">
+    <div class="col">
+      <span class="eyebrow" data-r style="--i:0">Под капотом</span>
+      <h2 data-r style="--i:1">Простой стек, <span class="grad">один деплой</span>.</h2>
+      <div class="stack">
+        <div class="card" data-r style="--i:2"><span>Бот + API</span><h3>FastAPI, Python 3.12</h3><p>Одно приложение: API, вебхук бота, планировщик напоминаний.</p></div>
+        <div class="card" data-r style="--i:3"><span>Мини-приложение</span><h3>React + TypeScript</h3><p>Собрано на Vite, работает внутри Telegram.</p></div>
+        <div class="card" data-r style="--i:4"><span>Данные</span><h3>Postgres</h3><p>SQLAlchemy 2, одна строка на каждую отметку.</p></div>
+        <div class="card" data-r style="--i:5"><span>Хостинг</span><h3>Railway</h3><p>Один Dockerfile собирает обе части.</p></div>
+      </div>
+    </div>
+    <div class="col">
+      <span class="eyebrow" data-r style="--i:2">Планы</span>
+      <div class="road" style="grid-template-columns:minmax(0,1fr)">
+        <div class="card" data-r style="--i:3"><h3><i class="dot"></i>Готово</h3><ul><li>Привычки, отметки, питомец и наряды</li><li>Напоминания бота и вечерний итог</li><li>Группы друзей с поддержкой</li></ul></div>
+        <div class="card" data-r style="--i:4"><h3><i class="dot n"></i>Дальше</h3><ul><li>Обучающее видео в первом /start</li><li>Русский и казахский</li></ul></div>
+        <div class="card" data-r style="--i:5"><h3><i class="dot l"></i>Позже</h3><ul><li>Недельная карточка итогов для публикации</li><li>Достижения, заметки, экспорт</li></ul></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 10 CTA -->
+<section class="slide" aria-label="Попробовать">
+  <div class="cta">
+    <div class="pop-wrap"><svg class="logo" viewBox="0 0 256 256" role="img" aria-label="Habit Pal logo"><use href="#logo"/></svg></div>
+    <h2 data-r style="--i:3">Начните первую <span class="grad">серию</span> сегодня.</h2>
+    <p class="lead" data-r style="--i:4;max-width:40ch">Откройте бота, отправьте /start и познакомьтесь с питомцем.</p>
+    <div class="link" data-r style="--i:5"><code id="botlink">t.me/habitpallbot</code><a class="btn" id="open" href="https://t.me/habitpallbot" target="_blank" rel="noopener">Открыть бота</a><button class="btn ghost" id="copy"><svg class="i"><use href="#i-copy"/></svg>Копировать ссылку</button></div>
+    <p style="color:var(--mut);font-size:.9rem;font-weight:700;--i:6" data-r>Бесплатно. Без аккаунта и установки.</p>
+  </div>
+</section>
+
+</main>
+
+<div class="hint" id="hint">Стрелки, свайп или касание по краям</div>
+
+<nav class="bar" aria-label="Слайды">
+  <button class="nav" id="prev" aria-label="Предыдущий слайд"><svg class="i"><use href="#i-left"/></svg></button>
+  <div class="dots" id="dots"></div>
+  <span class="count" id="count">1 / 10</span>
+  <button class="nav" id="next" aria-label="Следующий слайд"><svg class="i"><use href="#i-right"/></svg></button>
+</nav>
+
+<script>
+(function(){
+var BOT_USERNAME='habitpallbot';
+var T={tap:function(l){return 'Нажмите «'+l+'»'},off:'Звук выключен',on:'Звук включён',copy:'Копировать ссылку',copied:'Скопировано',lv:'Ур.',slide:'Слайд',pets:{capybara:'Капибара',penguin:'Пингвин',cat:'Кот',dog:'Пёс',panda:'Панда',fox:'Лиса',bunny:'Зайчик',frog:'Лягушка',owl:'Сова',axolotl:'Аксолотль'},accs:{glasses:'Очки',shades:'Тёмные очки',beanie:'Шапка',cap:'Кепка',flower:'Цветок',party:'Праздничный колпак',crown:'Корона',wizard:'Шляпа волшебника',scarf:'Шарф',bowtie:'Бабочка',medal:'Медаль',phones:'Наушники'}};
+var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+var slides=[].slice.call(document.querySelectorAll('.slide'));
+var N=slides.length,cur=0;
+var BASE='skip=1&theme=dark';
+var $=function(s,r){return (r||document).querySelector(s)};
+
+/* ---------- phones ---------- */
+var phones={};
+function setupPhone(el){
+  var f=document.createElement('iframe');
+  f.title='Live Habit Pal prototype';f.setAttribute('loading','lazy');
+  el.insertBefore(f,el.firstChild);
+  var p={el:el,f:f,v:0,steps:[],cur:0,tab:el.dataset.tab,q:''};
+  phones[el.id]=p;
+  function fit(){f.style.transform='scale('+(el.clientWidth/390)+')'}
+  fit();if(window.ResizeObserver)new ResizeObserver(fit).observe(el);else addEventListener('resize',fit);
+  f.addEventListener('load',function(){hook(p)});
+}
+function url(p,tab,q){p.v++;return 'app/index.html?'+BASE+(q?'&'+q:'')+'&v='+p.v+'#'+tab}
+function loadPhone(p){if(!p.loaded){p.loaded=1;p.f.src=url(p,p.tab,p.q)}}
+function unloadPhone(p){if(p.loaded){p.loaded=0;p.f.src='about:blank'}}
+function hook(p){
+  try{
+    var d=p.f.contentDocument;if(!d||d.__hp)return;d.__hp=1;
+    d.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-act=tab]');if(b)tabTapped(p,b.dataset.tab)});
+    d.addEventListener('keydown',function(e){fwdKey(e)});
+  }catch(e){}
+}
+function openTab(p,tab){
+  p.tab=tab;
+  try{var b=p.f.contentDocument.querySelector('[data-act=tab][data-tab="'+tab+'"]');if(b){b.click();return}}catch(e){}
+  p.f.src=url(p,tab,p.q);
+}
+/* tours: a hint ring that points at the next tab */
+var TABS=['today','group','create','review','profile'];
+var CAPS={today:'Tap a circle to check a habit off.',create:'Pick a preset or name your own.',review:'One line about your day.',profile:'Your buddy and your grid.'};
+function setupTour(box){
+  var p=phones[box.dataset.tour];var btns=[].slice.call(box.querySelectorAll('.step'));
+  p.steps=btns;p.ring=$('.ring',p.el);
+  btns.forEach(function(b,i){b.addEventListener('click',function(){openTab(p,b.dataset.tab);setStep(p,i)})});
+  setStep(p,0);
+}
+function tabTapped(p,tab){
+  if(!p.steps.length)return;
+  for(var i=0;i<p.steps.length;i++)if(p.steps[i].dataset.tab===tab){setStep(p,i);return}
+}
+function setStep(p,i){
+  p.cur=i;
+  p.steps.forEach(function(b,j){b.classList.toggle('on',j===i)});
+  var nx=p.steps[i+1];
+  if(p.ring){
+    if(nx){var ti=TABS.indexOf(nx.dataset.tab);p.ring.hidden=false;p.ring.dataset.i=ti;
+      p.ring.style.left=(3+(ti+.5)*18.8)+'%';
+      p.ring.firstChild.textContent=T.tap(nx.dataset.en)}
+    else p.ring.hidden=true;
+  }
+}
+
+/* ---------- buddy slide ---------- */
+var PETS=['capybara','penguin','cat','dog','panda','fox','bunny','frog','owl','axolotl'];
+var ACC=[['glasses','Glasses',1],['shades','Shades',2],['beanie','Beanie',1],['cap','Cap',2],['flower','Flower',2],['party','Party hat',4],['crown','Crown',5],['wizard','Wizard hat',6],['scarf','Scarf',3],['bowtie','Bow tie',3],['medal','Medal',7],['phones','Headphones',4]];
+var b={pet:'fox',lvl:6,acc:'crown'};
+var petsEl=$('#pets'),outEl=$('#outfits'),lv=$('#lv'),lvn=$('#lvn'),t6;
+PETS.forEach(function(n){var c=document.createElement('button');c.className='chip';c.textContent=T.pets[n]||n[0].toUpperCase()+n.slice(1);c.setAttribute('aria-pressed',n===b.pet);c.onclick=function(){b.pet=n;draw6()};c.dataset.pet=n;petsEl.appendChild(c)});
+ACC.forEach(function(a){var c=document.createElement('button');c.className='chip';c.dataset.acc=a[0];c.innerHTML=(T.accs[a[0]]||a[1])+' <small>'+T.lv+' '+a[2]+'</small>';c.onclick=function(){if(b.lvl<a[2]){b.lvl=a[2];lv.value=a[2]}b.acc=a[0];draw6()};outEl.appendChild(c)});
+lv.addEventListener('input',function(){b.lvl=+lv.value;draw6()});
+function draw6(reload){
+  lvn.textContent=b.lvl;lv.value=b.lvl;
+  [].forEach.call(petsEl.children,function(c){c.setAttribute('aria-pressed',c.dataset.pet===b.pet)});
+  [].forEach.call(outEl.children,function(c){var a=ACC.filter(function(x){return x[0]===c.dataset.acc})[0];c.classList.toggle('lock',b.lvl<a[2]);c.setAttribute('aria-pressed',c.dataset.acc===b.acc&&b.lvl>=a[2])});
+  clearTimeout(t6);t6=setTimeout(function(){
+    var p=phones.p6;try{localStorage.clear()}catch(e){}
+    p.q='pet='+b.pet+'&lvl='+(b.lvl-1)+'&sheet=dress'+(b.acc?'&acc='+b.acc:'');
+    p.loaded=1;p.f.src=url(p,'today',p.q);
+  },reload===false?0:220);
+}
+
+/* ---------- video ---------- */
+var vid=$('#vid'),snd=$('#snd');
+snd.onclick=function(){vid.muted=!vid.muted;if(!vid.muted)vid.play().catch(function(){});snd.setAttribute('aria-pressed',!vid.muted);snd.querySelector('use').setAttribute('href',vid.muted?'#i-mute':'#i-sound');snd.querySelector('span').textContent=vid.muted?T.off:T.on};
+
+/* ---------- chat replay + cta ---------- */
+$('#replay').onclick=function(){var c=$('#chat');c.querySelectorAll('.msg').forEach(function(m){m.style.animation='none';void m.offsetWidth;m.style.animation=''})};
+$('#openrev').onclick=function(){go(3);openTab(phones.p4,'review');var p=phones.p4;tabTapped(p,'review')};
+var bl=$('#botlink');
+if(BOT_USERNAME)bl.textContent='t.me/'+BOT_USERNAME;
+$('#copy').onclick=function(){var t=bl.textContent,btn=this;var done=function(){btn.lastChild.textContent=T.copied;setTimeout(function(){btn.lastChild.textContent=T.copy},1500)};
+  try{navigator.clipboard.writeText(t).then(done,function(){sel()})}catch(e){sel()}
+  function sel(){var r=document.createRange();r.selectNodeContents(bl);var s=getSelection();s.removeAllRanges();s.addRange(r)}};
+
+/* ---------- deck ---------- */
+var dots=$('#dots');
+slides.forEach(function(s,i){var d=document.createElement('button');d.setAttribute('aria-label',T.slide+' '+(i+1)+': '+s.getAttribute('aria-label'));d.innerHTML='<i></i>';d.onclick=function(){go(i)};dots.appendChild(d)});
+function go(n){
+  n=Math.max(0,Math.min(N-1,n));cur=n;
+  slides.forEach(function(s,i){s.classList.toggle('active',i===n);s.dataset.pos=i<n?'prev':i>n?'next':'cur';s.setAttribute('aria-hidden',i!==n);if(i===n)s.scrollTop=0});
+  [].forEach.call(dots.children,function(d,i){d.setAttribute('aria-current',i===n)});
+  $('#prog').style.width=((n+1)/N*100)+'%';$('#count').textContent=(n+1)+' / '+N;
+  $('#prev').disabled=n===0;$('#next').disabled=n===N-1;
+  var ph=slides.map(function(s){return [].slice.call(s.querySelectorAll('[data-phone]'))});
+  ph.forEach(function(list,i){list.forEach(function(el){var p=phones[el.id];if(Math.abs(i-n)<=1){if(el.hasAttribute('data-manual')){if(i===n&&!p.loaded)draw6(false);else if(i!==n&&Math.abs(i-n)>1)unloadPhone(p)}else loadPhone(p)}else unloadPhone(p)})});
+  if(n===5)draw6(false);
+  if(n===2){vid.currentTime=0;vid.play().catch(function(){})}else vid.pause();
+  try{history.replaceState(null,'','#slide-'+(n+1))}catch(e){}
+  if(go.n)$('#hint').classList.add('off');go.n=1;
+}
+$('#prev').onclick=function(){go(cur-1)};$('#next').onclick=function(){go(cur+1)};
+function fwdKey(e){
+  var t=e.target&&e.target.tagName;if(t==='INPUT'&&/Arrow/.test(e.key))return;
+  if(e.key==='ArrowRight'||e.key==='PageDown'){go(cur+1);e.preventDefault&&e.preventDefault()}
+  else if(e.key==='ArrowLeft'||e.key==='PageUp'){go(cur-1);e.preventDefault&&e.preventDefault()}
+  else if(e.key==='Home')go(0);else if(e.key==='End')go(N-1);
+  else if(e.key===' '&&t!=='BUTTON'&&t!=='INPUT'){go(cur+1);e.preventDefault&&e.preventDefault()}
+}
+document.addEventListener('keydown',fwdKey);
+/* swipe */
+var sx,sy,st=true;
+document.addEventListener('touchstart',function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY;st=!e.target.closest('.phone,input')},{passive:true});
+document.addEventListener('touchend',function(e){if(!st)return;var t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)go(cur+(dx<0?1:-1))},{passive:true});
+/* click empty side areas */
+$('#deck').addEventListener('click',function(e){
+  if(e.target.closest('button,a,input,label,.phone,.chat,.card,.step,.chip,code,video,h1,h2,p,li'))return;
+  var x=e.clientX/innerWidth;if(x>.7)go(cur+1);else if(x<.3)go(cur-1);
+});
+
+/* init */
+[].forEach.call(document.querySelectorAll('[data-phone]'),setupPhone);
+[].forEach.call(document.querySelectorAll('[data-tour]'),setupTour);
+var m=/slide-(\d+)/.exec(location.hash);go(m?+m[1]-1:0);
+addEventListener('hashchange',function(){var m=/slide-(\d+)/.exec(location.hash);if(m&&+m[1]-1!==cur)go(+m[1]-1)});
+setTimeout(function(){$('#hint').classList.add('off')},5000);
+})();
+</script>
